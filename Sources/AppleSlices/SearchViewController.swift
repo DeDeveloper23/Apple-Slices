@@ -103,14 +103,26 @@ class SearchViewController: NSViewController, NSSearchFieldDelegate, NSTableView
     }
     
     @objc func openSettingsWindow() {
-        if settingsWindow == nil || settingsWindow?.isVisible == false {
+        print("Opening settings window")
+        if settingsWindow == nil {
+            print("Settings window is nil, creating new window")
             createSettingsWindow()
         }
-        NSApp.activate(ignoringOtherApps: true)
-        settingsWindow?.makeKeyAndOrderFront(nil)
+        
+        if let window = settingsWindow {
+            print("Settings window exists")
+            if !window.isVisible {
+                print("Making settings window visible")
+                window.makeKeyAndOrderFront(nil)
+            }
+            NSApp.activate(ignoringOtherApps: true)
+        } else {
+            print("Settings window is still nil after creation attempt")
+        }
     }
     
     func createSettingsWindow() {
+        print("Creating settings window")
         let window = NSWindow(contentRect: NSRect(x: 100, y: 100, width: 600, height: 400),
                               styleMask: [.titled, .closable, .miniaturizable, .resizable],
                               backing: .buffered,
@@ -118,17 +130,17 @@ class SearchViewController: NSViewController, NSSearchFieldDelegate, NSTableView
         window.title = "Settings"
         window.isReleasedWhenClosed = false
         
-        settingsContentView = NSView(frame: NSRect(x: 0, y: 0, width: 600, height: 400))
+        settingsContentView = NSView(frame: window.contentRect(forFrameRect: window.frame))
         
         settingsSplitView = NSSplitView(frame: settingsContentView.bounds)
-        settingsSplitView.isVertical = false
+        settingsSplitView.isVertical = true
         settingsSplitView.dividerStyle = .thin
         
-        settingsLeftPane = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: 400))
-        settingsRightPane = NSView(frame: NSRect(x: 200, y: 0, width: 400, height: 400))
+        settingsLeftPane = NSView(frame: NSRect(x: 0, y: 0, width: 200, height: settingsContentView.bounds.height))
+        settingsRightPane = NSView(frame: NSRect(x: 200, y: 0, width: settingsContentView.bounds.width - 200, height: settingsContentView.bounds.height))
         
-        settingsSplitView.addSubview(settingsLeftPane)
-        settingsSplitView.addSubview(settingsRightPane)
+        settingsSplitView.addArrangedSubview(settingsLeftPane)
+        settingsSplitView.addArrangedSubview(settingsRightPane)
         
         settingsContentView.addSubview(settingsSplitView)
         
@@ -137,28 +149,42 @@ class SearchViewController: NSViewController, NSSearchFieldDelegate, NSTableView
         
         window.delegate = self
         
+        print("Setting up category list")
         setupSettingsCategoryList()
+        print("Updating window size")
         updateSettingsWindowSize()
+        print("Settings window creation complete")
     }
     
     func setupSettingsCategoryList() {
+        guard let settingsLeftPane = settingsLeftPane else {
+            print("Error: settingsLeftPane is nil")
+            return
+        }
+        
         let scrollView = NSScrollView(frame: settingsLeftPane.bounds)
         settingsCategoryList = NSTableView(frame: scrollView.bounds)
         
         let column = NSTableColumn(identifier: NSUserInterfaceItemIdentifier("category"))
         column.title = "Categories"
-        column.width = 200
+        column.width = settingsLeftPane.bounds.width - 20 // Adjust width to fit the pane
         settingsCategoryList.addTableColumn(column)
         
         settingsCategoryList.delegate = self
         settingsCategoryList.dataSource = self
-        settingsCategoryList.rowHeight = 20
+        settingsCategoryList.rowHeight = 30 // Increase row height
+        settingsCategoryList.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
         
         scrollView.documentView = settingsCategoryList
         scrollView.hasVerticalScroller = true
         scrollView.hasHorizontalScroller = false
+        scrollView.autohidesScrollers = true
         
         settingsLeftPane.addSubview(scrollView)
+        
+        // Select the first category by default
+        settingsCategoryList.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
+        updateSettingsRightPane(for: 0)
     }
     
     func createVisibilityView() -> NSView {
@@ -387,7 +413,7 @@ class SearchViewController: NSViewController, NSSearchFieldDelegate, NSTableView
     }
     
     func updateSettingsWindowSize() {
-        updateSettingsLayout()
+        settingsWindow?.setContentSize(settingsContentView.frame.size)
     }
     
     @objc func toggleShortcutVisibility(_ sender: NSButton) {
@@ -517,12 +543,14 @@ class SearchViewController: NSViewController, NSSearchFieldDelegate, NSTableView
                 cell = NSTableCellView(frame: NSRect(x: 0, y: 0, width: tableView.frame.width, height: 30))
                 cell?.identifier = cellIdentifier
                 
-                let textField = NSTextField(frame: NSRect(x: 0, y: 0, width: tableView.frame.width, height: 30))
+                let textField = NSTextField(frame: NSRect(x: 5, y: 0, width: tableView.frame.width - 10, height: 30))
                 textField.isEditable = false
                 textField.isSelectable = false
                 textField.drawsBackground = false
                 textField.isBordered = false
                 textField.textColor = .labelColor
+                textField.lineBreakMode = .byTruncatingTail
+                textField.cell?.truncatesLastVisibleLine = true
                 cell?.textField = textField
                 cell?.addSubview(textField)
             }
