@@ -14,10 +14,31 @@ Apple-Slices sits in your menu bar, offering a convenient dropdown menu with var
 
 ## How to Use Apple-Slices
 
-1. Install the application on your macOS device.
-2. Click on the Apple-Slices icon in the menu bar to access the dropdown menu.
-3. Select the desired action or shortcut from the menu.
-4. Customize the menu items and actions through the settings (feature coming soon).
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/Apple-Slices.git
+   cd Apple-Slices
+   ```
+
+2. Build the project:
+   ```
+   swift build
+   ```
+
+3. Run the application:
+   ```
+   swift run
+   ```
+
+4. Once running, the Apple-Slices icon will appear in your menu bar.
+
+5. Click on the Apple-Slices icon in the menu bar to access the dropdown menu.
+
+6. Select the desired action or shortcut from the menu.
+
+7. Customize the menu items and actions through the settings (feature coming soon).
+
+Note: You may need to grant necessary permissions for the app to function properly on your macOS device.
 
 ## Why Open Source?
 
@@ -43,7 +64,7 @@ We encourage contributions from developers of all skill levels. Whether you're f
 
 ## License
 
-Apple-Slices is released under the [insert license type here] license. See the LICENSE file for more details.
+Apple-Slices is released under the GPLv3 license. See the LICENSE file for more details.
 
 ## Disclaimer
 
