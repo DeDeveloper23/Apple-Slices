@@ -16,7 +16,7 @@ Apple-Slices sits in your menu bar, offering a convenient dropdown menu with var
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/Apple-Slices.git
+   git clone https://github.com/DeDeveloper23/Apple-Slices.git
    cd Apple-Slices
    ```
 
