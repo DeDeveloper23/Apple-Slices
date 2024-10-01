@@ -12,6 +12,11 @@ Apple-Slices sits in your menu bar, offering a convenient dropdown menu with var
 - System information at a glance
 - Custom scripts or automations
 
+
+
+https://github.com/user-attachments/assets/2cb961d2-a20a-4a64-941c-295bfa4865e0
+
+
 ## How to Use Apple-Slices
 
 1. Clone the repository:
